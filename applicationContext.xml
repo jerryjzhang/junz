@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:jdbc="http://www.springframework.org/schema/jdbc"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:tx="http://www.springframework.org/schema/tx"
+	xsi:schemaLocation="http://www.springframework.org/schema/jdbc http://www.springframework.org/schema/jdbc/spring-jdbc-3.1.xsd
+		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-3.1.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.1.xsd">
+
+	<context:component-scan base-package="com.junz.hibernate"/>
+	<tx:annotation-driven/>
+
+	<jdbc:embedded-database id="dataSource" type="H2" />
+	
+	<bean id="sessionFactory" class="org.springframework.orm.hibernate3.annotation.AnnotationSessionFactoryBean">
+   		<property name="dataSource" ref="dataSource"/>
+   		<!-- This tells Hibernate to scan the package for @Entity and @Table -->
+   		<property name="packagesToScan">
+   			<list>
+				<value>com.junz.hibernate.domain</value>
+			</list>
+		</property>
+		<!-- This tells Hibernate to scan the package for special annotations, like @TypeDef -->
+		<property name="annotatedPackages">
+			<list>
+				<value>com.junz.hibernate.domain</value>
+			</list>
+		</property>
+   		<property name="hibernateProperties">
+   			<props>
+				<prop key="hibernate.dialect">org.hibernate.dialect.H2Dialect</prop>
+				<prop key="hibernate.hbm2ddl.auto">create</prop>  
+				<prop key="hibernate.show.sql">true</prop> 
+			</props>
+		</property>
+		<!-- 1. To add global hibernate interceptor, one way is inject it into sessionFactory -->
+		<property name="entityInterceptor" ref="logInterceptor"/>
+ 	</bean>
+ 	
+ 	<bean id="logInterceptor" class="com.junz.hibernate.interceptor.LogInterceptor" />
+
+	<bean id="transactionManager"  class="org.springframework.orm.hibernate3.HibernateTransactionManager">
+		<property name="sessionFactory" ref="sessionFactory"/>
+		<!-- 2. Another way is to inject it into hibernate transaction manager -->
+		<!-- 
+		<property name="entityInterceptor" ref="logInterceptor"/>
+		 -->
+	</bean>
+	
+	
+
+</beans>
