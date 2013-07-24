@@ -157,10 +157,10 @@ public class SytsLogInputFormat extends InputFormat<LongWritable, Text> {
 
 				if ((i + 1) == groups)
 					split = new DBInputSplit(i * groupSize + startId,
-							numberOfIds + startId);
+							numberOfIds + startId - 1);
 				else
 					split = new DBInputSplit(i * groupSize + startId,
-							(i * groupSize) + groupSize + startId);
+							(i * groupSize) + groupSize + startId - 1);
 
 				splits.add(split);
 			}
