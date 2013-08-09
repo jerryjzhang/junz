@@ -2,6 +2,9 @@ hardstatus on
 hardstatus alwayslastline
 hardstatus string "%{.bW}%-w%{.rY}%n %t%{-}%+w %=%{..G} %H(%l) %{..Y} %Y/%m/%d %c:%s "
 
+#Change meta key from Ctrl+a to Ctrl+o
+escape ^Oo
+
 #ALT-,. and ALT-<>
 bindkey "^[<" eval number !echo $WINDOW-1|bc
 bindkey "^[>" eval number !echo $WINDOW+1|bc
