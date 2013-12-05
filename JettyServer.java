@@ -1,3 +1,5 @@
+package com.ms.msqe.tdms.onboard.main;
+
 import org.eclipse.jetty.server.Handler;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.handler.DefaultHandler;
@@ -8,8 +10,12 @@ import org.eclipse.jetty.util.thread.QueuedThreadPool;
 import org.eclipse.jetty.webapp.WebAppContext;
 
 
-public class Main {
+public class WebServer {
 	public static void main(String [] args){
+	  if(args.length < 1){
+          System.exit(1);
+	  }
+		
       Server webServer = new Server();
   	  SelectChannelConnector ret = new SelectChannelConnector();
   	    ret.setAcceptQueueSize(128);
@@ -21,14 +27,15 @@ public class Main {
      webServer.setThreadPool(new QueuedThreadPool());
     
      ResourceHandler resource_handler = new ResourceHandler();
-     resource_handler.setResourceBase("WebContent");
+     
+     String webappBaseDir = args[0];
+     resource_handler.setResourceBase(webappBaseDir);
+     resource_handler.setWelcomeFiles(new String[]{"AlcazarFailure/welcome.html"});
      
      WebAppContext context = new WebAppContext();
-     context.setDescriptor("WebContent/WEB-INF/web.xml");
-     context.setResourceBase("WebContent");
-     context.setContextPath("/");
-     context.setWelcomeFiles(new String[]{"errorrunbook/runbook.html"});
-     
+     context.setDescriptor(webappBaseDir + "/WEB-INF/web.xml");
+     context.setResourceBase(webappBaseDir);
+     context.setContextPath("/"); 
      HandlerList handlers = new HandlerList();
      handlers.setHandlers(new Handler[] { resource_handler, context, new DefaultHandler() });
      webServer.setHandler(handlers);
